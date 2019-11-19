@@ -2,7 +2,7 @@
 from PySide2.QtGui import QTextDocument
 from PySide2.QtWidgets import QPlainTextDocumentLayout
 
-from angr.analyses.decompiler.structured_codegen import CConstant, CVariable, CFunctionCall
+from angr.analyses.decompiler.structured_codegen import CConstant, CVariable, CFunctionCall, CStructField
 
 from ...config import Conf
 
@@ -50,6 +50,13 @@ class QCodeDocument(QTextDocument):
         elif isinstance(node, CFunctionCall):
             starts = self._codegen.nodemap.get(node.callee_func if node.callee_func is not None else node.callee_target,
                                                None)
+            if starts is None:
+                return [ ]
+
+        elif isinstance(node, CStructField):
+            key = (node.struct_type, node.offset)
+            starts = self._codegen.nodemap.get(key, None)
+
             if starts is None:
                 return [ ]
 
