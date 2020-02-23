@@ -7,7 +7,7 @@ from angr.knowledge_plugins import Function
 from angr import StateHierarchy
 
 from ..data.instance import ObjectContainer
-from ..data.jobs import CodeTaggingJob
+from ..data.jobs import CodeTaggingJob, VariableRecoveryJob
 from ..config import Conf
 from .views import (FunctionsView, DisassemblyView, SymexecView, StatesView, StringsView, ConsoleView, CodeView,
                     InteractionView, SyncView, PatchesView, )
@@ -91,6 +91,13 @@ class Workspace:
             if the_func is not None:
                 self.on_function_selected(the_func)
 
+        self.instance.add_job(
+            VariableRecoveryJob(
+                on_finish=self.on_variable_recovered,
+            )
+        )
+
+    def on_variable_recovered(self):
         self.instance.add_job(
             CodeTaggingJob(
                 on_finish=self.on_function_tagged,
